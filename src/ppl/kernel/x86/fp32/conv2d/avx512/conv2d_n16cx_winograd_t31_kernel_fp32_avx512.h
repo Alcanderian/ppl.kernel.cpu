@@ -127,8 +127,8 @@ inline void conv2d_n16cx_winograd_t31_kernel_fp32_avx512_core(
         "mov CHANNELS_IDX(%[param]), %%r10\n"
         "cmp $CH_DT_BLK, %%r10\n"
         "jl 5f\n" // label_ic_remain
-"4:\n" // label_ic_body
         PPL_X86_INLINE_ASM_ALIGN()
+"4:\n" // label_ic_body
         ".if T_LEN < 9\n"
         ".irp IC,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15\n"
         "vmovups (\\IC * CH_DT_BLK * D_BYTES)(%%rbx), %%zmm31\n"
@@ -169,6 +169,7 @@ inline void conv2d_n16cx_winograd_t31_kernel_fp32_avx512_core(
         "lea (T_LEN * CH_DT_BLK * D_BYTES)(%%rax), %%rax\n"
         ".else\n" // .if T_LEN < 9
         "mov $CH_DT_BLK, %%r9\n"
+        PPL_X86_INLINE_ASM_ALIGN()
 "9:\n" // label_ic
         "vmovups (0 * CH_DT_BLK * D_BYTES)(%%rbx), %%zmm31\n"
         "prefetcht0 ((0 * CH_DT_BLK + CH_DT_BLK * CH_DT_BLK) * D_BYTES)(%%rbx)\n"
@@ -206,7 +207,6 @@ inline void conv2d_n16cx_winograd_t31_kernel_fp32_avx512_core(
         ".if T_LEN > 30\n vfmadd231ps ((0 + 30 * CH_DT_BLK) * D_BYTES)(%%rax)%{1to16}, %%zmm31, %%zmm30\n .endif\n"
         "lea D_BYTES(%%rax), %%rax\n"
         "sub $1, %%r9\n"
-        "cmp $0, %%r9\n"
         "jne 9b\n" // label_ic
         "lea ((T_LEN - 1) * CH_DT_BLK * D_BYTES)(%%rax), %%rax\n"
         ".endif\n" // .if T_LEN < 9

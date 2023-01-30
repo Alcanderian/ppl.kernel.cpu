@@ -171,8 +171,8 @@ void conv2d_n16cx_gemm_direct_fp32_avx512_blk1x14_kernel_core(int64_t *param)
         "lea (%%rbx, %%r9, D_BYTES), %%rcx\n"
         "cmp $IC_DATA_BLK, %%r10\n"
         "jl 6f\n" // label_ic_remain
-"5:\n" // label_ic_body
         PPL_X86_INLINE_ASM_ALIGN()
+"5:\n" // label_ic_body
         ".if U_S < 6\n"
         ".irp IC,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15\n"
         "vmovups (\\IC * OC_DATA_BLK * D_BYTES)(%%rbx), %%zmm28\n"
@@ -257,6 +257,7 @@ void conv2d_n16cx_gemm_direct_fp32_avx512_blk1x14_kernel_core(int64_t *param)
         "lea (%%rax, %%r8, D_BYTES), %%rax\n"
         ".else\n" // .if U_S < 6
         "mov $IC_DATA_BLK, %%r9\n"
+        PPL_X86_INLINE_ASM_ALIGN()
 "9:\n" // label_ic
         ".irp IC,0,1\n"
         "vmovups (\\IC * OC_DATA_BLK * D_BYTES)(%%rbx), %%zmm28\n"
@@ -342,7 +343,6 @@ void conv2d_n16cx_gemm_direct_fp32_avx512_blk1x14_kernel_core(int64_t *param)
         "lea (2 * OC_DATA_BLK * D_BYTES)(%%rcx), %%rcx\n"
         "lea (2 * D_BYTES)(%%rax), %%rax\n"
         "sub $2, %%r9\n"
-        "cmp $0, %%r9\n"
         "jne 9b\n" // label_ic
         "lea (-IC_DATA_BLK * D_BYTES)(%%rax, %%r8, D_BYTES), %%rax\n"
         ".endif\n" // .if U_S < 6

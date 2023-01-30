@@ -153,8 +153,8 @@ void conv2d_n16cx_gemm_direct_fp32_fma_blk1x6_kernel_core(int64_t *param)
         "cmp $IC_DATA_BLK, %%r10\n"
         "mov %%r12, %%rax\n"
         "jl 6f\n" // label_ic_remain
-"5:\n" // label_ic_body
         PPL_X86_INLINE_ASM_ALIGN()
+"5:\n" // label_ic_body
         ".if U_S < 4\n"
         ".irp IC,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15\n"
         "vmovups ((\\IC * OC_DATA_BLK + 0 * OC_REG_ELTS) * D_BYTES)(%%rbx), %%ymm14\n"
@@ -198,9 +198,9 @@ void conv2d_n16cx_gemm_direct_fp32_fma_blk1x6_kernel_core(int64_t *param)
         "cmp $IC_DATA_BLK, %%r10\n"
         "lea (%%rax, %%r8, D_BYTES), %%rax\n"
         ".else\n" // U_S < 4
-        "mov $4, %%rdx\n"
-"51:\n" // label_ic_body_inner
+        "mov $IC_DATA_BLK, %%rdx\n"
         PPL_X86_INLINE_ASM_ALIGN()
+"51:\n" // label_ic_body_inner
         ".irp IC,0,1,2,3\n"
         "vmovups ((\\IC * OC_DATA_BLK + 0 * OC_REG_ELTS) * D_BYTES)(%%rbx), %%ymm14\n"
         "vmovups ((\\IC * OC_DATA_BLK + 1 * OC_REG_ELTS) * D_BYTES)(%%rbx), %%ymm15\n"
@@ -238,7 +238,7 @@ void conv2d_n16cx_gemm_direct_fp32_fma_blk1x6_kernel_core(int64_t *param)
         "vfmadd231ps %%ymm15, %%ymm13, %%ymm11\n"
         ".endif\n"
         ".endr\n"
-        "sub $1, %%rdx\n"
+        "sub $4, %%rdx\n"
         "lea (4 * OC_DATA_BLK * D_BYTES)(%%rbx), %%rbx\n"
         "lea (4 * D_BYTES)(%%rax), %%rax\n"
         "jne 51b\n" // label_ic_body_inner

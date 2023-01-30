@@ -129,8 +129,8 @@ void conv2d_n16cx_winograd_t9_kernel_fp32_avx512_core(
         "lea (%%rbx, %%r9, 2 * D_BYTES), %%rdx\n"
         "cmp $CH_DT_BLK, %%r10\n"
         "jl 5f\n" // label_ic_remain
-"4:\n" // label_ic_body
         PPL_X86_INLINE_ASM_ALIGN()
+"4:\n" // label_ic_body
         ".irp IC,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15\n"
         "vmovups (\\IC * CH_DT_BLK * D_BYTES)(%%rbx), %%zmm27\n"
         "vmovups (\\IC * CH_DT_BLK * D_BYTES)(%%rcx), %%zmm28\n"

@@ -139,8 +139,8 @@ void conv_gemm_fp32_fma_kernel_core(
         "mov %%r14, %%rax\n"
         "cmp $M6_K_DT_BLK, %%r10\n"
         "jl 5f\n" // label_k_remain
-"4:\n" // label_k_body
         PPL_X86_INLINE_ASM_ALIGN()
+"4:\n" // label_k_body
         "lea (%%rax, %%r11, D_BYTES), %%rcx\n"
         ".if M_LEN > 0\n" // UNROLL OR NOT
         ".irp K,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15\n"

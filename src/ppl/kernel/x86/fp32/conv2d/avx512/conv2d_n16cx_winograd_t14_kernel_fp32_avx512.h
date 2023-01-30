@@ -125,8 +125,8 @@ void conv2d_n16cx_winograd_t14_kernel_fp32_avx512_core(
         "lea (%%rbx, %%r9, D_BYTES), %%rcx\n"
         "cmp $CH_DT_BLK, %%r10\n"
         "jl 5f\n" // label_ic_remain
-"4:\n" // label_ic_body
         PPL_X86_INLINE_ASM_ALIGN()
+"4:\n" // label_ic_body
         ".if T_LEN < 6\n"
         ".irp IC,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15\n"
         "vmovups (\\IC * CH_DT_BLK * D_BYTES)(%%rbx), %%zmm28\n"
@@ -209,6 +209,7 @@ void conv2d_n16cx_winograd_t14_kernel_fp32_avx512_core(
         "lea (T_LEN * CH_DT_BLK * D_BYTES)(%%rax), %%rax\n"
         ".else\n" // .if T_LEN < 6
         "mov $CH_DT_BLK, %%rsi\n"
+        PPL_X86_INLINE_ASM_ALIGN()
 "9:\n" // label_ic
         ".irp IC,0,1\n"
         "vmovups (\\IC * CH_DT_BLK * D_BYTES)(%%rbx), %%zmm28\n"
@@ -290,7 +291,6 @@ void conv2d_n16cx_winograd_t14_kernel_fp32_avx512_core(
         "lea (2 * CH_DT_BLK * D_BYTES)(%%rcx), %%rcx\n"
         "lea (2 * D_BYTES)(%%rax), %%rax\n"
         "sub $2, %%rsi\n"
-        "cmp $0, %%rsi\n"
         "jne 9b\n" // label_ic
         "lea ((T_LEN - 1) * CH_DT_BLK * D_BYTES)(%%rax), %%rax\n"
         ".endif\n"

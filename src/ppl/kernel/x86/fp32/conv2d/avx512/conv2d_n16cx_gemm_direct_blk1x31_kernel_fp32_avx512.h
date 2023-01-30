@@ -173,8 +173,8 @@ void conv2d_n16cx_gemm_direct_fp32_avx512_blk1x31_kernel_core(int64_t *param)
         "mov CHANNELS_IDX(%[param]), %%r10\n"
         "cmp $IC_DATA_BLK, %%r10\n"
         "jl 6f\n" // label_ic_remain
-"5:\n" // label_ic_body
         PPL_X86_INLINE_ASM_ALIGN()
+"5:\n" // label_ic_body
         ".if U_S < 9\n"
         ".irp IC,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15\n"
         "vmovups (\\IC * OC_DATA_BLK * D_BYTES)(%%rbx), %%zmm31\n"
@@ -215,6 +215,7 @@ void conv2d_n16cx_gemm_direct_fp32_avx512_blk1x31_kernel_core(int64_t *param)
         "lea (%%rax, %%r8, D_BYTES), %%rax\n"
         ".else\n" // .if U_S < 9
         "mov $IC_DATA_BLK, %%r9\n"
+        PPL_X86_INLINE_ASM_ALIGN()
 "9:\n" // label_ic
         "vmovups (0 * OC_DATA_BLK * D_BYTES)(%%rbx), %%zmm31\n"
         "prefetcht0 ((0 * OC_DATA_BLK + IC_DATA_BLK * OC_DATA_BLK) * D_BYTES)(%%rbx)\n"
@@ -252,7 +253,6 @@ void conv2d_n16cx_gemm_direct_fp32_avx512_blk1x31_kernel_core(int64_t *param)
         ".if U_S > 30\n vfmadd231ps ((0 + 30 * IC_DATA_BLK) * D_BYTES)(%%rax)%{1to16}, %%zmm31, %%zmm30\n .endif\n"
         "lea D_BYTES(%%rax), %%rax\n"
         "sub $1, %%r9\n"
-        "cmp $0, %%r9\n"
         "jne 9b\n" // label_ic
         "lea (-IC_DATA_BLK * D_BYTES)(%%rax, %%r8, D_BYTES), %%rax\n"
         ".endif\n" // .if U_S < 9
